@@ -66,8 +66,12 @@ COPY ./config/php.ini $PHP_INI_DIR/conf.d/
 RUN echo '*  *  *  *  * /usr/local/bin/php  /var/www/artisan schedule:run >> /dev/null 2>&1' > /etc/crontabs/root && mkdir /etc/supervisor.d
 COPY ./config/master.ini /etc/supervisor.d/
 COPY ./config/supervisord.conf /etc/
+
 COPY ./config/default.conf /etc/nginx/conf.d
-COPY ./config/nginx.conf /etc/nginx/nginx.conf
+COPY ./config/nginx.conf /etc/nginx/
+
+COPY ./config/www.conf /usr/local/etc/php-fpm.conf.d/www.conf
+COPY ./config/www.conf /usr/local/etc/php-fpm.d/www.conf
 
 RUN chmod 755 -R /etc/supervisor.d/ /etc/supervisord.conf  /etc/nginx/
 
@@ -80,5 +84,7 @@ RUN mkdir -p /var/lib/nginx/tmp /var/log/nginx \
 
 # Add non root user to the tty group, so we can write to stdout and stderr
 RUN addgroup www-data tty
+
+USER www-data
 
 CMD ["/usr/bin/supervisord"]
