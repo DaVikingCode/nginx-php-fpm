@@ -28,6 +28,8 @@ RUN apk add --update --no-cache \
     supervisor \
     nano \
     nginx \
+    dcron \
+    libcap \
     icu-dev \
     freetype-dev \
     postgresql-dev \
@@ -52,7 +54,9 @@ RUN docker-php-ext-configure \
     bcmath \
     exif \
     && docker-php-ext-enable \
-    redis
+    redis && \
+    chown www-data:www-data /usr/sbin/crond && \
+    setcap cap_setgid=ep /usr/sbin/crond
 
 # Add Composer
 RUN curl -s https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer
@@ -63,7 +67,9 @@ COPY ./config/opcache.ini $PHP_INI_DIR/conf.d/
 COPY ./config/php.ini $PHP_INI_DIR/conf.d/
 
 # Setup Crond and Supervisor by default
-RUN echo '*  *  *  *  * /usr/local/bin/php  /var/www/artisan schedule:run >> /dev/null 2>&1' > /etc/crontabs/root && mkdir /etc/supervisor.d
+RUN echo -e '*  *  *  *  * echo $(/usr/local/bin/php  /var/www/artisan schedule:run) > /proc/1/fd/1 2>&1' > /etc/crontabs/www-data && \
+    chown www-data:www-data /etc/crontabs/www-data
+RUN mkdir /etc/supervisor.d
 COPY ./config/master.ini /etc/supervisor.d/
 COPY ./config/supervisord.conf /etc/
 
@@ -73,7 +79,7 @@ COPY ./config/nginx.conf /etc/nginx/
 COPY ./config/www.conf /usr/local/etc/php-fpm.conf.d/www.conf
 COPY ./config/www.conf /usr/local/etc/php-fpm.d/www.conf
 
-RUN chmod 755 -R /etc/supervisor.d/ /etc/supervisord.conf  /etc/nginx/
+RUN chmod 755 -R /etc/supervisor.d/ /etc/supervisord.conf  /etc/nginx/ /etc/crontabs/
 
 # Remove Build Dependencies
 RUN apk del -f .build-deps
