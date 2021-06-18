@@ -13,6 +13,10 @@ RUN apk update && apk add --no-cache --virtual .build-deps  \
     zlib-dev \
     libjpeg-turbo-dev \
     libpng-dev \
+    python3 \
+    gcc \
+    clang \
+    llvm \
     libxml2-dev \
     bzip2-dev \
     zip \
@@ -26,7 +30,6 @@ RUN apk add --update --no-cache \
     pngquant \
     optipng \
     supervisor \
-    nano \
     nginx \
     dcron \
     libcap \
@@ -57,11 +60,6 @@ RUN docker-php-ext-configure \
     redis && \
     chown www-data:www-data /usr/sbin/crond && \
     setcap cap_setgid=ep /usr/sbin/crond
-
-# Add Composer
-RUN curl -s https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer
-ENV COMPOSER_ALLOW_SUPERUSER=1
-ENV PATH="./vendor/bin:$PATH"
 
 COPY ./config/opcache.ini $PHP_INI_DIR/conf.d/
 COPY ./config/php.ini $PHP_INI_DIR/conf.d/
