@@ -18,9 +18,7 @@ RUN apk update && apk add --no-cache --virtual .build-deps  \
     clang \
     llvm \
     libxml2-dev \
-    bzip2-dev \
-    zip \
-    libzip-dev
+    bzip2-dev
 
 
 # Add Production Dependencies
