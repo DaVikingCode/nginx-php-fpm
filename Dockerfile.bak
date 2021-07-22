@@ -56,7 +56,6 @@ RUN docker-php-ext-configure \
     pcntl \
     bcmath \
     exif \
-    zip \
     && docker-php-ext-enable \
     redis && \
     chown www-data:www-data /usr/sbin/crond && \
