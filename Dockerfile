@@ -18,7 +18,9 @@ RUN apk update && apk add --no-cache --virtual .build-deps  \
     clang \
     llvm \
     libxml2-dev \
-    bzip2-dev
+    bzip2-dev \
+    zip \
+    libzip-dev
 
 
 # Add Production Dependencies
@@ -34,8 +36,6 @@ RUN apk add --update --no-cache \
     icu-dev \
     freetype-dev \
     postgresql-dev \
-    zip \
-    libzip-dev \
     && pecl install redis
 
 # Configure & Install Extension
