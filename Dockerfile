@@ -45,7 +45,7 @@ RUN docker-php-ext-configure \
     opcache --enable-opcache &&\
     docker-php-ext-configure gd --with-jpeg=/usr/include/ --with-freetype=/usr/include/ && \
     docker-php-ext-configure pgsql -with-pgsql=/usr/local/pgsql &&\
-    docker-php-ext-configure zip --with-libzip && \
+    docker-php-ext-configure zip && \
     docker-php-ext-install \
     opcache \
     pgsql \
@@ -58,7 +58,6 @@ RUN docker-php-ext-configure \
     pcntl \
     bcmath \
     exif \
-    zip \
     && docker-php-ext-enable \
     redis && \
     chown www-data:www-data /usr/sbin/crond && \
