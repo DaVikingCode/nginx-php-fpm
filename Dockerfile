@@ -36,6 +36,8 @@ RUN apk add --update --no-cache \
     icu-dev \
     freetype-dev \
     postgresql-dev \
+    zip \
+    libzip-dev
     && pecl install redis
 
 # Configure & Install Extension
