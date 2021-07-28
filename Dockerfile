@@ -18,10 +18,7 @@ RUN apk update && apk add --no-cache --virtual .build-deps  \
     clang \
     llvm \
     libxml2-dev \
-    bzip2-dev \
-    zip \
-    libzip-dev
-
+    bzip2-dev
 
 # Add Production Dependencies
 RUN apk add --update --no-cache \
@@ -36,6 +33,8 @@ RUN apk add --update --no-cache \
     icu-dev \
     freetype-dev \
     postgresql-dev \
+    zip \
+    libzip-dev \
     && pecl install redis
 
 # Configure & Install Extension
@@ -56,6 +55,7 @@ RUN docker-php-ext-configure \
     pcntl \
     bcmath \
     exif \
+    zip \
     && docker-php-ext-enable \
     redis && \
     chown www-data:www-data /usr/sbin/crond && \
