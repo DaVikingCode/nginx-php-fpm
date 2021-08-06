@@ -61,7 +61,6 @@ RUN docker-php-ext-configure \
     chown www-data:www-data /usr/sbin/crond && \
     setcap cap_setgid=ep /usr/sbin/crond
 
-COPY ./config/opcache.ini $PHP_INI_DIR/conf.d/
 COPY ./config/php.ini $PHP_INI_DIR/conf.d/
 
 # Setup Crond and Supervisor by default
