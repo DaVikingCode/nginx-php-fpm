@@ -47,6 +47,7 @@ RUN apk add --update --no-cache \
     postgresql-dev \
     zip \
     libzip-dev \
+    less \
     && pecl install redis
 
 # Configure & Install Extension
