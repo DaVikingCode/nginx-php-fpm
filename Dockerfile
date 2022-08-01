@@ -1,4 +1,6 @@
-FROM php:8.1.0-fpm-alpine3.15
+FROM node:16.13-alpine as node
+
+FROM php:8.1.0-fpm-alpine3.15 as base
 
 # Setup Working Dir
 WORKDIR /var/www
@@ -34,6 +36,8 @@ RUN apk update && apk add --no-cache --virtual .build-deps  \
 
 # Add Production Dependencies
 RUN apk add --update --no-cache \
+    git \
+    openssh \
     pcre-dev ${PHPIZE_DEPS} \
     jpegoptim \
     pngquant \
@@ -77,6 +81,7 @@ RUN docker-php-ext-configure \
 COPY ./config/php.ini $PHP_INI_DIR/conf.d/
 
 # Setup Crond and Supervisor by default
+# TODO : move that to project
 RUN echo -e '*  *  *  *  * echo $(/usr/local/bin/php  /var/www/artisan schedule:run) > /proc/1/fd/1 2>&1' > /etc/crontabs/www-data && \
     chown www-data:www-data /etc/crontabs/www-data
 RUN mkdir /etc/supervisor.d
@@ -103,6 +108,16 @@ RUN addgroup www-data tty
 
 # Add and chown efs mount point so that www-data can write on it.
 RUN mkdir -p /var/www/efs && chown www-data:www-data /var/www/efs
+
+# Install Composer
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+
+# Install Node
+COPY --from=node /usr/lib /usr/lib
+COPY --from=node /usr/local/share /usr/local/share
+COPY --from=node /usr/local/lib /usr/local/lib
+COPY --from=node /usr/local/include /usr/local/include
+COPY --from=node /usr/local/bin /usr/local/bin
 
 USER www-data
 
