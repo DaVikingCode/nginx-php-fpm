@@ -107,6 +107,7 @@ RUN mkdir -p /var/lib/nginx/tmp /var/log/nginx \
 # Add non root user to the tty group, so we can write to stdout and stderr
 RUN addgroup www-data tty
 
+#TODO : move to project
 # Add and chown efs mount point so that www-data can write on it.
 RUN mkdir -p /var/www/efs && chown www-data:www-data /var/www/efs
 
@@ -122,6 +123,7 @@ COPY --from=node /usr/local/bin /usr/local/bin
 
 USER www-data
 
+# TODO : move to project
 VOLUME ["/var/www/efs"]
 
 CMD ["/usr/bin/supervisord"]
