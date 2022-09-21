@@ -81,8 +81,8 @@ RUN docker-php-ext-configure \
 COPY ./config/php.ini $PHP_INI_DIR/conf.d/
 
 # TODO : move that to project
-RUN echo -e '*  *  *  *  * echo $(/usr/local/bin/php  /var/www/artisan schedule:run) > /proc/1/fd/1 2>&1' > /etc/crontabs/www-data && \
-    chown www-data:www-data /etc/crontabs/www-data
+#RUN echo -e '*  *  *  *  * echo $(/usr/local/bin/php  /var/www/artisan schedule:run) > /proc/1/fd/1 2>&1' > /etc/crontabs/www-data && \
+#   chown www-data:www-data /etc/crontabs/www-data
 
 # Setup config for supervisor nginx php-fpm crontabs
 RUN mkdir /etc/supervisor.d
@@ -94,6 +94,7 @@ COPY ./config/nginx.conf /etc/nginx/
 
 COPY ./config/www.conf /usr/local/etc/php-fpm.conf.d/www.conf
 COPY ./config/www.conf /usr/local/etc/php-fpm.d/www.conf
+COPY ./config/docker.conf /usr/local/etc/php-fpm.d/docker.conf
 
 RUN chmod 755 -R /etc/supervisor.d/ /etc/supervisord.conf  /etc/nginx/ /etc/crontabs/
 
@@ -109,7 +110,7 @@ RUN addgroup www-data tty
 
 #TODO : move to project
 # Add and chown efs mount point so that www-data can write on it.
-RUN mkdir -p /var/www/efs && chown www-data:www-data /var/www/efs
+#RUN mkdir -p /var/www/efs && chown www-data:www-data /var/www/efs
 
 # Install Composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
@@ -124,6 +125,6 @@ COPY --from=node /usr/local/bin /usr/local/bin
 USER www-data
 
 # TODO : move to project
-VOLUME ["/var/www/efs"]
+#VOLUME ["/var/www/efs"]
 
 CMD ["/usr/bin/supervisord"]
