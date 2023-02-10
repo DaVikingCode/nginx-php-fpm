@@ -3,7 +3,23 @@
 This is a base image using nginx + php fpm monitored by supervisord.
 
 - Bash
-- PHP 8.1
+- PHP 8.1 with extensions : 
+  - opcache
+  - mysqli
+  - pgsql
+  - pdo
+  - pdo_mysql
+  - pdo_pgsql
+  - sockets
+  - intl
+  - gd
+  - xml
+  - bz2
+  - pcntl
+  - bcmath
+  - exif
+  - zip
+  - xsl
 - PostgreSQL driver
 - MySQL driver
 - PostgreSQL Client with pg_dump

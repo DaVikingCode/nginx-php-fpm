@@ -54,6 +54,7 @@ RUN apk add --update --no-cache \
     zip \
     libzip-dev \
     less \
+    libxslt-dev \
     && pecl install redis
 
 # Configure & Install Extension
@@ -78,6 +79,7 @@ RUN docker-php-ext-configure \
     bcmath \
     exif \
     zip \
+    xsl \
     && docker-php-ext-enable \
     redis && \
     chown www-data:www-data /usr/sbin/crond && \
