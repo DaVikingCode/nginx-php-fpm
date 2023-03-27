@@ -55,6 +55,7 @@ RUN apk add --update --no-cache \
     libzip-dev \
     less \
     libxslt-dev \
+    exiftool \
     && pecl install redis
 
 # Configure & Install Extension
