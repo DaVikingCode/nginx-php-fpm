@@ -17,6 +17,7 @@ This is a base image using nginx + php fpm monitored by supervisord.
   - bz2
   - pcntl
   - bcmath
+  - mbstring
   - exif
   - zip
   - xsl
@@ -24,10 +25,11 @@ This is a base image using nginx + php fpm monitored by supervisord.
 - MySQL driver
 - PostgreSQL Client with pg_dump
 - GD extension
+- Imagick extension
+- Exiftool
 - supervisor
 - Composer
 - Nodejs 16.13 + npm 8.1.2
-- Exiftool
 
 It must be launched using tty option.
 It uses the user 'www-data' (id 82).

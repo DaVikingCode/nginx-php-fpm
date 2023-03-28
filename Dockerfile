@@ -54,9 +54,12 @@ RUN apk add --update --no-cache \
     zip \
     libzip-dev \
     less \
+    imagemagick \
     libxslt-dev \
     exiftool \
-    && pecl install redis
+    imagemagick-dev \
+    && pecl install redis \
+    && pecl install -o -f imagick
 
 # Configure & Install Extension
 RUN docker-php-ext-configure \
@@ -82,6 +85,7 @@ RUN docker-php-ext-configure \
     zip \
     xsl \
     && docker-php-ext-enable \
+    imagick \
     redis && \
     chown www-data:www-data /usr/sbin/crond && \
     setcap cap_setgid=ep /usr/sbin/crond
