@@ -59,6 +59,7 @@ RUN apk add --update --no-cache \
     libxslt-dev \
     exiftool \
     imagemagick-dev \
+    chromium \
     && pecl install redis \
     && pecl install -o -f imagick
 
@@ -126,6 +127,11 @@ COPY --from=node /usr/local/share /usr/local/share
 COPY --from=node /usr/local/lib /usr/local/lib
 COPY --from=node /usr/local/include /usr/local/include
 COPY --from=node /usr/local/bin /usr/local/bin
+
+# Puppeteer npm configuration.
+# It uses apk installed Chromium "/usr/bin/chromium-browser", tell Puppeteer to not install local Chromium which takes time.
+# Compatible version = Puppeteer 10.0.0. Install in project with "npm install puppeteer@10.0.0".
+ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
 
 USER www-data
 

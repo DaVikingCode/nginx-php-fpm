@@ -29,6 +29,8 @@ This is a base image using nginx + php fpm monitored by supervisord.
 - Exiftool
 - supervisor
 - Composer
+- Chromium + Puppeteer npm configuration
+- Nodejs 16.13 + npm 8.1.2
 - Nodejs 19.9.0 + npm 9.6.3
 
 It must be launched using tty option.
