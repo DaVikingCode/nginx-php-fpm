@@ -131,6 +131,7 @@ COPY --from=node /usr/local/bin /usr/local/bin
 # Puppeteer npm configuration.
 # It uses apk installed Chromium "/usr/bin/chromium-browser", tell Puppeteer to not install local Chromium which takes time.
 # Compatible version = Puppeteer 10.0.0. Install in project with "npm install puppeteer@10.0.0".
+# More info here : https://stackoverflow.com/questions/69417926/docker-error-eacces-permission-denied-mkdir
 ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
 
 USER www-data
