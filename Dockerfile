@@ -96,15 +96,19 @@ COPY ./config/php.ini $PHP_INI_DIR/conf.d/
 
 # Setup config for supervisor nginx php-fpm crontabs
 RUN mkdir /etc/supervisor.d
-COPY ./config/master.ini /etc/supervisor.d/
+COPY ./config/supervisord-master.ini /etc/supervisor.d/
 COPY ./config/supervisord.conf /etc/
 
-COPY ./config/default.conf /etc/nginx/conf.d
+RUN mkdir /var/log/supervisor/
+RUN touch /var/log/supervisor/supervisord.log
+RUN chown -R www-data:www-data /var/log/supervisor/
+
+COPY ./config/nginx-default.conf /etc/nginx/conf.d
 COPY ./config/nginx.conf /etc/nginx/
 
-COPY ./config/www.conf /usr/local/etc/php-fpm.conf.d/www.conf
-COPY ./config/www.conf /usr/local/etc/php-fpm.d/www.conf
-COPY ./config/docker.conf /usr/local/etc/php-fpm.d/docker.conf
+COPY ./config/php-fpm.conf /usr/local/etc/php-fpm.conf.d/www.conf
+COPY ./config/php-fpm.conf /usr/local/etc/php-fpm.d/www.conf
+COPY ./config/php-fpm-docker.conf /usr/local/etc/php-fpm.d/docker.conf
 
 RUN chmod 755 -R /etc/supervisor.d/ /etc/supervisord.conf  /etc/nginx/ /etc/crontabs/
 
