@@ -3,6 +3,7 @@
 This is a base image using nginx + php fpm monitored by supervisord.
 
 - Bash
+- JQ
 - PHP 8.1 with extensions : 
   - opcache
   - mysqli
