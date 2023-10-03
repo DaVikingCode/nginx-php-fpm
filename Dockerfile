@@ -38,6 +38,7 @@ RUN apk update && apk add --no-cache --virtual .build-deps  \
 # Add Production Dependencies
 RUN apk add --update --no-cache \
     bash \
+    jq \
     git \
     openssh \
     pcre-dev ${PHPIZE_DEPS} \
