@@ -1,7 +1,7 @@
 #FROM node:20.0.0-alpine as node
 FROM node:19.9.0-alpine as node
 
-FROM php:8.1.22-fpm-alpine3.17 as base
+FROM php:8.1.0-fpm-alpine3.15 as base
 
 # Setup Working Dir
 WORKDIR /var/www
