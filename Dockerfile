@@ -39,6 +39,7 @@ RUN apk update && apk add --no-cache --virtual .build-deps  \
 RUN apk add --update --no-cache \
     bash \
     jq \
+    nano \
     git \
     openssh \
     pcre-dev ${PHPIZE_DEPS} \
