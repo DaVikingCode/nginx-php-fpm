@@ -1,8 +1,11 @@
+#FROM node:20.0.0-alpine as node
 FROM node:19.9.0-alpine AS node
 
-# Base image with PHP-FPM
 #FROM php:8.1.22-fpm-alpine3.16 AS base
 FROM php:8.1.28-fpm-alpine3.18 AS base
+
+# Setup Working Dir
+WORKDIR /var/www
 
 # Musl for adding locales
 ENV MUSL_LOCALE_DEPS="cmake make musl-dev gcc gettext-dev libintl"
@@ -88,59 +91,41 @@ RUN docker-php-ext-configure \
     xsl \
     && docker-php-ext-enable \
     imagick \
-    redis
+    redis && \
+    chown www-data:www-data /usr/sbin/crond && \
+    setcap cap_setgid=ep /usr/sbin/crond
 
-# Create necessary directories and set permissions
-RUN mkdir -p /var/run/nginx \
-    && mkdir -p /var/run/php-fpm \
-    && mkdir -p /var/run/supervisor \
-    && mkdir -p /var/log/nginx \
-    && mkdir -p /var/log/supervisor \
-    && mkdir -p /var/log/php-fpm \
-    && chown -R www-data:www-data /var/run/nginx \
-    && chown -R www-data:www-data /var/run/php-fpm \
-    && chown -R www-data:www-data /var/run/supervisor \
-    && chown -R www-data:www-data /var/log/nginx \
-    && chown -R www-data:www-data /var/log/supervisor \
-    && chown -R www-data:www-data /var/log/php-fpm \
-    && chown -R www-data:www-data /etc/nginx \
-    && chown -R www-data:www-data /usr/sbin/nginx \
-    && chown -R www-data:www-data /usr/local/sbin/php-fpm \
-    && chown -R www-data:www-data /usr/local/etc/php-fpm.conf \
-    && touch /var/log/php-fpm/php-fpm.log \
-    && chown www-data:www-data /var/log/php-fpm/php-fpm.log \
-    && mkdir -p /run \
-    && chown www-data:www-data /run
+COPY ./config/php.ini $PHP_INI_DIR/conf.d/
 
-# Ensure cron directories exist and have correct permissions
-RUN mkdir -p /etc/cron.d \
-    && mkdir -p /etc/periodic \
-    && touch /etc/crontabs/www-data \
-    && chmod 755 /etc/cron.d \
-    && chmod 755 /etc/periodic \
-    && chown www-data:www-data /etc/cron.d \
-    && chown www-data:www-data /etc/periodic \
-    && chown www-data:www-data /etc/crontabs \
-    && chmod 755 /usr/sbin/crond \
-    && chown www-data:www-data /usr/sbin/crond \
-    && setcap cap_setgid=ep /usr/sbin/crond
-
-# Copy Nginx and Supervisor configuration files
-COPY ./config/nginx.conf /etc/nginx/nginx.conf
-COPY ./config/nginx-default.conf /etc/nginx/conf.d/default.conf
-
-# Copy Supervisor config files
-COPY ./config/supervisord.conf /etc/supervisord.conf
+# Setup config for supervisor nginx php-fpm crontabs
+RUN mkdir /etc/supervisor.d
 COPY ./config/supervisord-master.ini /etc/supervisor.d/master.ini
+COPY ./config/supervisord.conf /etc/
 
-# Copy custom PHP-FPM configuration
-COPY ./config/php-fpm.conf /usr/local/etc/php-fpm.conf
+RUN mkdir /var/log/supervisor/
+RUN touch /var/log/supervisor/supervisord.log
+RUN chown -R www-data:www-data /var/log/supervisor/
 
-# Copy PHP configuration
-COPY ./config/php.ini /usr/local/etc/php/php.ini
+COPY ./config/nginx-default.conf /etc/nginx/conf.d/default.conf
+COPY ./config/nginx.conf /etc/nginx/nginx.conf
 
-# Set permissions
-RUN chown -R www-data:www-data /var/lib/nginx /var/log/nginx /run/nginx /var/log/supervisor /var/run
+# Tests
+#RUN chmod -R 777 /etc/nginx/
+#RUN chown www-data:www-data /etc/nginx/conf.d/default.conf
+#RUN chown www-data:www-data /etc/nginx/nginx.conf
+
+COPY ./config/php-fpm.conf /usr/local/etc/php-fpm.conf.d/www.conf
+COPY ./config/php-fpm.conf /usr/local/etc/php-fpm.d/www.conf
+COPY ./config/php-fpm-docker.conf /usr/local/etc/php-fpm.d/docker.conf
+
+RUN chmod 755 -R /etc/supervisor.d/ /etc/supervisord.conf  /etc/nginx/ /etc/crontabs/
+
+# Remove Build Dependencies
+RUN apk del -f .build-deps
+
+RUN mkdir -p /var/lib/nginx/tmp /var/log/nginx \
+    && chown -R www-data:www-data /var/lib/nginx /var/log/nginx /etc/nginx \
+    && chmod -R 755 /var/lib/nginx /var/log/nginx /etc/nginx
 
 # Add non root user to the tty group, so we can write to stdout and stderr
 RUN addgroup www-data tty
@@ -161,17 +146,7 @@ COPY --from=node /usr/local/bin /usr/local/bin
 # More info here : https://stackoverflow.com/questions/69417926/docker-error-eacces-permission-denied-mkdir
 ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
 
-# Remove Build Dependencies
-RUN apk del -f .build-deps
-
-# Setup Working Dir
-WORKDIR /var/www
-
-# Switch to www-data user to run services
 USER www-data
 
-# Expose ports
-EXPOSE 8080
-
-# Command to run supervisord
-CMD ["supervisord", "-c", "/etc/supervisord.conf"]
+#CMD ["/usr/bin/supervisord"]
+CMD ["/usr/bin/supervisord", "-c", "/etc/supervisord.conf"]
