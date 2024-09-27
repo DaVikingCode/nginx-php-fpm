@@ -2,7 +2,7 @@ FROM node:19.9.0-alpine AS node
 
 # Base image with PHP-FPM
 #FROM php:8.1.22-fpm-alpine3.16 AS base
-FROM php:8.1.28-fpm-alpine3.18 AS base
+FROM php:8.1.29-fpm-alpine3.19 AS base
 
 # Musl for adding locales
 ENV MUSL_LOCALE_DEPS="cmake make musl-dev gcc gettext-dev libintl"
@@ -18,8 +18,8 @@ RUN apk add --no-cache \
 
 # Add Repositories
 RUN rm -f /etc/apk/repositories &&\
-    echo "http://dl-cdn.alpinelinux.org/alpine/v3.18/main" >> /etc/apk/repositories && \
-    echo "http://dl-cdn.alpinelinux.org/alpine/v3.18/community" >> /etc/apk/repositories
+    echo "http://dl-cdn.alpinelinux.org/alpine/v3.19/main" >> /etc/apk/repositories && \
+    echo "http://dl-cdn.alpinelinux.org/alpine/v3.19/community" >> /etc/apk/repositories
 
 # Add Build Dependencies
 RUN apk update && apk add --no-cache --virtual .build-deps  \
