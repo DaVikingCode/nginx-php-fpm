@@ -1,7 +1,7 @@
 FROM node:19.9.0-alpine AS node
 
 # Base image with PHP-FPM
-FROM php:8.2.25RC1-fpm-alpine3.20 AS base
+FROM php:8.3.13RC1-fpm-alpine3.20 AS base
 
 # Musl for adding locales
 ENV MUSL_LOCALE_DEPS="cmake make musl-dev gcc gettext-dev libintl"
@@ -137,7 +137,7 @@ COPY ./config/supervisord-master.ini /etc/supervisor.d/master.ini
 COPY ./config/php-fpm.conf /usr/local/etc/php-fpm.conf
 
 # Copy PHP configuration
-COPY ./config/php8.2.ini /usr/local/etc/php/php.ini
+COPY ./config/php8.3.ini /usr/local/etc/php/php.ini
 
 # Set permissions
 RUN chown -R www-data:www-data /var/lib/nginx /var/log/nginx /run/nginx /var/log/supervisor /var/run
