@@ -1,8 +1,7 @@
 FROM node:19.9.0-alpine AS node
 
 # Base image with PHP-FPM
-#FROM php:8.1.22-fpm-alpine3.16 AS base
-FROM php:8.1.30-fpm-alpine3.19 AS base
+FROM php:8.2.25RC1-fpm-alpine3.20 AS base
 
 # Musl for adding locales
 ENV MUSL_LOCALE_DEPS="cmake make musl-dev gcc gettext-dev libintl"
@@ -18,8 +17,8 @@ RUN apk add --no-cache \
 
 # Add Repositories
 RUN rm -f /etc/apk/repositories &&\
-    echo "http://dl-cdn.alpinelinux.org/alpine/v3.19/main" >> /etc/apk/repositories && \
-    echo "http://dl-cdn.alpinelinux.org/alpine/v3.19/community" >> /etc/apk/repositories
+    echo "http://dl-cdn.alpinelinux.org/alpine/v3.20/main" >> /etc/apk/repositories && \
+    echo "http://dl-cdn.alpinelinux.org/alpine/v3.20/community" >> /etc/apk/repositories
 
 # Add Build Dependencies
 RUN apk update && apk add --no-cache --virtual .build-deps  \
@@ -31,7 +30,8 @@ RUN apk update && apk add --no-cache --virtual .build-deps  \
     clang \
     llvm \
     libxml2-dev \
-    bzip2-dev
+    bzip2-dev \
+    linux-headers
 
 # Add Production Dependencies
 RUN apk add --update --no-cache \
@@ -137,7 +137,7 @@ COPY ./config/supervisord-master.ini /etc/supervisor.d/master.ini
 COPY ./config/php-fpm.conf /usr/local/etc/php-fpm.conf
 
 # Copy PHP configuration
-COPY ./config/php.ini /usr/local/etc/php/php.ini
+COPY ./config/php8.2.ini /usr/local/etc/php/php.ini
 
 # Set permissions
 RUN chown -R www-data:www-data /var/lib/nginx /var/log/nginx /run/nginx /var/log/supervisor /var/run
