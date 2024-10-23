@@ -1,7 +1,6 @@
 FROM node:19.9.0-alpine AS node
 
 # Base image with PHP-FPM
-#FROM php:8.1.22-fpm-alpine3.16 AS base
 FROM php:8.1.30-fpm-alpine3.19 AS base
 
 # Musl for adding locales
