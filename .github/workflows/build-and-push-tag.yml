@@ -3,7 +3,7 @@ name: ci
 on:
   push:
     tags:
-      - 'v*.*.*'
+      - 'php8.*-v*.*.*'
 jobs:
   test:
     runs-on: ubuntu-latest
