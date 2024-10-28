@@ -1,7 +1,7 @@
 FROM node:19.9.0-alpine AS node
 
 # Base image with PHP-FPM
-FROM php:8.2.25RC1-fpm-alpine3.20 AS base
+FROM php:8.2.24-fpm-alpine3.20 AS base
 
 # Musl for adding locales
 ENV MUSL_LOCALE_DEPS="cmake make musl-dev gcc gettext-dev libintl"
