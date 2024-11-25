@@ -1,4 +1,4 @@
-FROM node:19.9.0-alpine AS node
+FROM node:18.20-alpine AS node
 
 # Base image with PHP-FPM
 FROM php:8.3.12-fpm-alpine3.20 AS base
