@@ -7,14 +7,6 @@ FROM php:8.1.31-fpm-alpine3.19 AS base
 ENV MUSL_LOCALE_DEPS="cmake make musl-dev gcc gettext-dev libintl"
 ENV MUSL_LOCPATH="/usr/share/i18n/locales/musl"
 
-RUN apk add --no-cache \
-    $MUSL_LOCALE_DEPS \
-    && wget https://gitlab.com/rilian-la-te/musl-locales/-/archive/master/musl-locales-master.zip \
-    && unzip musl-locales-master.zip \
-      && cd musl-locales-master \
-      && cmake -DLOCALE_PROFILE=OFF -D CMAKE_INSTALL_PREFIX:PATH=/usr . && make && make install \
-      && cd .. && rm -r musl-locales-master
-
 # Add Repositories
 RUN rm -f /etc/apk/repositories &&\
     echo "http://dl-cdn.alpinelinux.org/alpine/v3.19/main" >> /etc/apk/repositories && \
@@ -35,14 +27,8 @@ RUN apk update && apk add --no-cache --virtual .build-deps  \
 # Add Production Dependencies
 RUN apk add --update --no-cache \
     bash \
-    jq \
-    nano \
-    git \
     openssh \
     pcre-dev ${PHPIZE_DEPS} \
-    jpegoptim \
-    pngquant \
-    optipng \
     supervisor \
     nginx \
     dcron \
@@ -50,17 +36,20 @@ RUN apk add --update --no-cache \
     icu-dev \
     freetype-dev \
     postgresql-dev \
-    postgresql-client \
     zip \
     libzip-dev \
     less \
-    imagemagick \
     libxslt-dev \
     exiftool \
-    imagemagick-dev \
     chromium \
-    && pecl install redis \
-    && pecl install -o -f imagick
+    $MUSL_LOCALE_DEPS \
+    && wget https://gitlab.com/rilian-la-te/musl-locales/-/archive/master/musl-locales-master.zip \
+    && unzip musl-locales-master.zip \
+    && cd musl-locales-master \
+    && cmake -DLOCALE_PROFILE=OFF -D CMAKE_INSTALL_PREFIX:PATH=/usr . && make && make install \
+    && cd .. && rm -r musl-locales-master
+
+# removed : nano \ less \ git \ jpegoptim \ pngquant \ optipng \
 
 # Configure & Install Extension
 RUN docker-php-ext-configure \
@@ -70,10 +59,8 @@ RUN docker-php-ext-configure \
     docker-php-ext-configure zip && \
     docker-php-ext-install \
     opcache \
-    mysqli \
     pgsql \
     pdo \
-    pdo_mysql \
     pdo_pgsql \
     sockets \
     intl \
@@ -84,10 +71,7 @@ RUN docker-php-ext-configure \
     bcmath \
     exif \
     zip \
-    xsl \
-    && docker-php-ext-enable \
-    imagick \
-    redis
+    xsl
 
 # Create necessary directories and set permissions
 RUN mkdir -p /var/run/nginx \
